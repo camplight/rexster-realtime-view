@@ -2,9 +2,9 @@
 <html>
   <head>
     <title>Force-Directed Layout</title>
-    <script src="/keyboard.js"></script>
+    <script src="keyboard.js"></script>
     <script type="text/javascript" src="./d3.v2.min.js"></script>
-    <script src="http://localhost:8000/client.js"></script>
+    <script src="http://178.79.173.17:8000/client.js"></script>
     <link type="text/css" rel="stylesheet" href="force.css"/>
   </head>
   <body>
@@ -15,37 +15,11 @@
     </script>
     <script type="text/javascript" src="force.js"></script>
     <script>
-      packageme.require("rexster-client").initialize(function(api){
+      packageme.require("rexster-client").initialize("//178.79.173.17:8000", function(api){
         api.getGraph("neo4jsample", function(err, graph){
           graph.getVertexes(function(err, vertexes){
             graph.getEdges(function(err, edges){
               var view = app.createGraphView(graph, vertexes, edges);
-              var countdownID = null;
-              var timeoutID = null;
-
-              /*var restart = function(){
-                console.log("RESTART LEVEL");
-              
-                if(timeoutID)
-                  clearTimeout(timeoutID);
-                if(countdownID)
-                  clearInterval(countdownID);
-
-                timeoutID = setTimeout(function(){
-                  graph.clear(function(err, response){
-                    view.clear();
-                    console.log("graph cleared", err, response);
-                  });
-                }, 10*1000);
-
-                var secs = 10;
-                d3.select("#timeLeft").text("TimeLeft:"+secs);
-                countdownID = setInterval(function(){
-                  secs -= 1;
-                  d3.select("#timeLeft").text("TimeLeft:"+secs);
-                }, 1000);
-
-              }*/
               
               graph.signals.newVertex.bind(function(vertex){
                 view.addNewVertex(vertex);
@@ -57,10 +31,10 @@
 
               graph.signals.graphCleared.bind(function(){
                 console.log("GRAPH CLEAR SIGNAL");
-                //restart();
+                // TODO find how to clear d3 svg and the force simulation
               });
 
-              //restart();
+              app.graph = graph;
             })
           });
         });
