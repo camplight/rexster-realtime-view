@@ -8,13 +8,25 @@
     <link type="text/css" rel="stylesheet" href="force.css"/>
   </head>
   <body>
-    <div id="timeLeft"></div>
+    <div id="timeout"></div>
+    <input type="button" id="reset" value="clear and reset"/>
     <div id="chart"></div>
     <script>
       app = {};
     </script>
     <script type="text/javascript" src="force.js"></script>
     <script>
+      var reloadPage = function(){
+        var c = 3;
+        d3.select("#timeout").text("Will reload because of clear and reset been hit after "+c+" secs.");
+        setInterval(function(){
+          c -= 1;
+          d3.select("#timeout").text("Will reload because of clear and reset been hit after "+c+" secs.");
+          if(c == 0)
+            window.location.reload();
+        }, 1000)
+      }
+
       packageme.require("rexster-client").initialize("//178.79.173.17:8000", function(api){
         api.getGraph("neo4jsample", function(err, graph){
           graph.getVertexes(function(err, vertexes){
@@ -32,9 +44,14 @@
               graph.signals.graphCleared.bind(function(){
                 console.log("GRAPH CLEAR SIGNAL");
                 // TODO find how to clear d3 svg and the force simulation
+                reloadPage();
               });
 
               app.graph = graph;
+              d3.select("#reset").on("click", function(){
+                graph.clear();
+                reloadPage();
+              });
             })
           });
         });
